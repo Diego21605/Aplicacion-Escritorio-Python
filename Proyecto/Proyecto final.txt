@@ -1,0 +1,188 @@
+Para poder crear la base de datos desde la consola:
+cd..
+cd xampp
+cd mysql
+cd bin
+mysql -u root -h localhost -p
+--------------------------------------------------------------------------------------------------------------------------------------
+Codigos que vamos a utilizar:
+
+show databases;           			 --> muestra las bases de datos creadas
+
+create database grupo_1_parcial_corte_2;    	 -->crea una base de datos llamada grupo_1_parcial_corte_2
+
+use grupo_1_parcial_corte_2; 			 --> seleccionar la base de datos grupo_1_parcial_corte_2.
+
+show tables;					 -->muestra las tablas creadas en la base de datos seleccionada
+
+describe TipoPrograma;    			 --> muestra la estructura de la tabla tipoprograma
+
+CRUD
+
+C--> INSERT
+R--> SELECT 
+U--> UPDATE
+D--> DELETE
+
+C--> INSERT
+
+insert into TipoPrograma(Nombre,Descripcion) values ('Profesional','es un miembro de una profesión; es una persona cuyo propósito de vida se concreta a través de la práctica de una actividad laboral específica');
+
+R--> SELECT 
+
+select * from TipoPrograma;
+
+U--> UPDATE
+
+update TipoPrograma set 
+Nombre='Postgrado',
+Descripcion='corresponde al ciclo de estudios de especialización que se cursa tras el título de grado.'
+where IdTipoPrograma=2;
+
+D--> DELETE
+
+delete  from TipoPrograma where IdTipoPrograma=1;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+TABLAS:
+
+Entidades fuertes:
+
+create table TPerfil(
+nIdPerfil int auto_increment,
+cNombrePerfil varchar(20) not null unique,
+cDecripcion varchar (100) not null,
+cMAcademico int not null,
+cMUsuario int not null,
+cMReporte int not null,
+dCreacion datetime not null,
+primary key(nIdPerfil)
+);
+
+CREATE TABLE TExperiencia(
+nIdExperiencia int auto_increment,
+nAnosExperiencia int (10) not null,
+cLugarDondeTrabajo varchar (100) not null,
+cTipoVia VARCHAR(10) not null,
+cNumeroLetraVia VARCHAR(10) not null,
+nViaUrbana INT(10) null,
+cTipoViaGeneradora VARCHAR(10) not null,
+nNumeroViaGeneradora INT(10) not null,
+cSufijo VARCHAR(10) null,
+nNumeroPlaca INT(10) not null,
+cAdicional VARCHAR(10) null,
+nTelefonoLugarTrabajo int (10) not null,
+cCorreoLugarTrabajo varchar (30) not null,
+cCargo varchar (20) not null,
+dCreacion datetime not null,
+primary key (nIdexperiencia)
+);
+
+create table T_TipoUsuario(
+nIdTipoUsuario int auto_increment,
+cTipoUsuario varchar(20) not null,
+cDescripcion varchar(100) not null,
+dCreacion datetime not null,
+primary key (nIdTipoUsuario)
+); 
+ 
+------------------------------------------------
+Entidades debiles
+
+CREATE TABLE TDocente(
+ nIdDocentes int auto_increment,
+ cPrimerNombre VARCHAR(20) not null,
+ cSegundoNombre VARCHAR(20) null,
+ cPrimerApellido VARCHAR(20) not null,
+ cSegundoApellido VARCHAR(20) not null,
+ nEdad int(100) not null,
+ nCedula INT (15) not null unique,
+ nTelefono INT(10) not null,
+ cCorreo VARCHAR(50) not null,
+ cTipoVia VARCHAR(10) not null,
+ cNumeroLetraVia VARCHAR(10) not null,
+ nViaUrbana INT(10) null,
+ cTipoViaGeneradora VARCHAR(10) not null,
+ nNumeroViaGeneradora INT(10) not null,
+ cSufijo VARCHAR(10) null,
+ nNumeroPlaca INT(10) not null,
+ cAdicional VARCHAR(10) null,
+ cEPS varchar(50) not null,
+ cEdad int (200) not null,
+ sexo varchar (30) not null
+ dCreacion datetime not null,
+ nIdExperiencia int not null,
+ nIdAsignatura int not null,
+ nIdPrograma int not null,
+ primary key(nIdDocentes),
+ foreign key (nIdExperiencia) references TExperiencia(nIdExperiencia),
+ foreign key (nIdAsignatura) references TAsignatura(nIdAsignatura),
+ foreign key (nIdPrograma) references TPrograma(nIdPrograma)
+ );
+
+create table TUsuario(
+nIdUsuario int auto_increment,
+cNombreUsuario varchar (20) not null unique,
+cContrasena varchar (200) not null,
+nIdPerfil int not null,
+nCedula int (15) not null,
+nTelefono int (20) not null,
+cCorreo varchar (50) not null,
+nIdTipoUsuario int not null,
+cTipoVia VARCHAR(10) not null,
+cNumeroLetraVia VARCHAR(10) not null,
+nViaUrbana INT(10) null,
+cTipoViaGeneradora VARCHAR(10) not null,
+nNumeroViaGeneradora INT(10) not null,
+cSufijo VARCHAR(10) null,
+nNumeroPlaca INT(10) not null,
+cAdicional VARCHAR(10) null,
+dCreacion datetime not null,
+primary key (nIdUsuario),
+foreign key (nIdPerfil) references TPerfil(nIdPerfil),
+foreign key (nIdTipoUsuario) references T_TipoUsuario(nIdTipoUsuario)
+);
+
+create table TAsignatura(
+nIdAsignatura int auto_increment,
+nCodigo varchar (10) not null unique,
+cNombre varchar (20) not null,
+cRequisitos varchar (50) not null,
+nCreditos int (10) not null,
+nIntensidadHoraria int (10) not null,
+dCreacion datetime not null,
+primary key (nIdAsignatura)
+);
+
+CREATE TABLE TPrograma(
+ nIdPrograma int auto_increment,
+ nCodigoPrograma int(20) not null unique,
+ cNombrePrograma VARCHAR(20) not null,
+ nIdAsignatura int not null,
+ nSemestre int (10) not null,
+ dCreacion datetime not null,
+ primary key(nIdPrograma),
+ foreign key (nIdAsignatura) references TAsignatura(nIdAsignatura)
+ );
+
+create table THistorial(
+nIdHistorial int auto_increment,
+nCodigo int (20) not null unique,
+nIdReporte int not null,
+dCreacion datetime not null,
+primary key (nIdHistorial),
+foreign key (nIdReporte) references TReporte(nIdReporte)
+);
+
+create table TReporte(
+nIdReporte int auto_increment,
+nCodigo int (10) not null unique,
+dReporte datetime not null,
+nIdDocentes int not null,
+nIdAsignatura int not null,
+nIdPrograma int not null,
+primary key (nIdReporte),
+foreign key (nIdDocentes) references TDocente(nIdDocentes),
+foreign key (nIdAsignatura) references TAsignatura(nIdAsignatura),
+foreign key (nIdPrograma) references TPrograma(nIdPrograma)
+);
